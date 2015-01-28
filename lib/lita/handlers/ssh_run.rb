@@ -3,64 +3,60 @@ module Lita
     class SshRun < Handler
       require 'net/ssh'
 
-      route(/^run(.+)\s+on\s+(.+)/i, :run_ssh, command: true)
+      route(/^run\s+(.+)\s+on\s+(.+)/i, :run_ssh, command: true)
 
-      route(/^Username\s+for\s+(.+)\s+is\s+(.+)/i, :set_user, command: true)
-
-      route(/^Password\s+for\s+(.+)\s+is\s+(.+)/i, :set_pass, command: true)
+      route(/^set\s+(username|password)\s+for\s+(.+)\s+to\s+(.+)/i, :set_user_pass, command: true)
 
       def run_ssh(response)
 
         cmd = response.matches[0][0]
-        puts response.matches
         server = response.matches[0][1]
-        id_server_user = response.user.id + "_" + server + "_user"
-        id_server_pass = response.user.id + "_" + server + "_pass"
+        id_server_user = response.user.id + "_" + server + "_username"
+        id_server_pass = response.user.id + "_" + server + "_password"
         usernm = redis.get(id_server_user)
         passwd = redis.get(id_server_pass)
+        get_user_pass(response, server, "Username") unless usernm
+        get_user_pass(response, server, "Password") unless passwd
 
         if usernm && passwd
-
           Net::SSH.start(server, usernm, :password => passwd) do |ssh|
             output = ssh.exec!(cmd)
             response.reply("```" + output + "```")
           end
-
         elsif usernm
-          get_user_pass(response, server, "Password")
+          response.reply_with_mention("I was unable to find a password for you on #{server}, please check you direct messages from me.")
         elsif passwd
-          get_user_pass(response, server, "Username")
+          response.reply_with_mention("I was unable to find a username for you on #{server}, please check you direct messages from me.")
         else
-          get_user_pass(response, server, "Username", "Password")
+          response.reply_with_mention("I was unable to find a username or password for you on #{server}, please check you direct messages from me.")
         end
 
-
       end
-
-
 
       def get_user_pass(response, server, *user_pass)
         user_pass.each do |blah|
-          response.reply_privately("No #{blah.capitalize} found for you on #{server}\nPlease privately reply with:\n`Lita, #{blah.capitalize} for #{server} is #{blah.upcase}`")
+          response.reply_privately("No #{blah.capitalize} found for you on #{server}\nPlease privately reply with:\n`Lita, Set #{blah.capitalize} for #{server} to #{blah.upcase}`")
         end
-
       end
 
+      def set_user_pass(response)
+        request = response.matches[0][0]
+        server = response.matches[0][1]
+        value = response.matches[0][2]
+        id_server_user_pass = response.user.id + "_" + server + "_" + request.downcase
 
-      def set_user(response)
-        server = response.matches[0][0]
-        usernm = response.matches[0][1]
-        id_server_user = response.user.id + "_" + server + "_user"
-        redis.set(id_server_user, usernm)
-        response.reply_privately("Username set")
-      end
+        if request && server && value
+          redis.set(id_server_user_pass, value)
+          response.reply_privately("#{request.capitalize} set")
+          id_server_user = response.user.id + "_" + server + "_username"
+          id_server_pass = response.user.id + "_" + server + "_password"
+          if redis.get(id_server_user) && redis.get(id_server_pass)
+            response.reply("Username and Password now set, please rerun your request")
 
-      def set_pass(response)
-        server = response.matches[0][0]
-        passwd= response.matches[0][1]
-        id_server_pass = response.user.id + "_" + server + "_pass"
-        redis.set(id_server_pass, passwd)
-        response.reply_privately("Password set")
+          end
+        else
+          response.reply_privately("There seems to have been a problem setting that for you")
+        end
       end
 
 

@@ -1,6 +1,12 @@
 # lita-ssh-run
 
-TODO: Add a description of the plugin.
+This will allow you to run commands via ssh
+Example:
+`Lita, run uptime on 192.168.1.10`
+
+Usernames and passwords are stored in redis memory by chat userid and host passed. **Only tested on slack**
+If not found, it will prompt via private message on how to enter user and password:
+Currently passwords are passed via plaintext in private message. I have requested to Slack to add an obfuscation format block for things like this.
 
 ## Installation
 
@@ -13,11 +19,14 @@ gem "lita-ssh-run"
 
 ## Configuration
 
-TODO: Describe any configuration attributes the plugin exposes.
+None
 
 ## Usage
 
-TODO: Describe the plugin's features and how to use them.
+`Lita, run uptime on 192.168.1.10`
+'Lita, set username for 192.168.1.0 to USERNAME`
+'Lita, set password for 192.168.1.0 to PASSWORD`
+
 
 ## License
 
