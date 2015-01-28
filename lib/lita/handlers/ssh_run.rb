@@ -7,6 +7,8 @@ module Lita
 
       route(/^set\s+(username|password)\s+for\s+(.+)\s+to\s+(.+)/i, :set_user_pass, command: true)
 
+      route(/^clear\s+all\s+stored\s+(creds|credentials)/i, :flush_redis, command: true, restrict_to: :admins)
+
       def run_ssh(response)
 
         cmd = response.matches[0][0]
@@ -57,6 +59,10 @@ module Lita
         else
           response.reply_privately("There seems to have been a problem setting that for you")
         end
+      end
+
+      def flush_redis(response)
+        redis.flushdb
       end
 
 

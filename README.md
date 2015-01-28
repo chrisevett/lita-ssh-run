@@ -24,7 +24,9 @@ None
 ## Usage
 
 `Lita, run uptime on 192.168.1.10`
+
 `Lita, set username for 192.168.1.0 to USERNAME`
+
 `Lita, set password for 192.168.1.0 to PASSWORD`
 
 
