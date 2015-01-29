@@ -21,9 +21,13 @@ module Lita
         get_user_pass(response, server, "Password") unless passwd
 
         if usernm && passwd
-          Net::SSH.start(server, usernm, :password => passwd) do |ssh|
+          Net::SSH.start(server, usernm, :password => passwd, :timeout => 10) do |ssh|
             output = ssh.exec!(cmd)
-            response.reply("```" + output + "```")
+            if !output
+              response.reply("Command was run, but it appears there was no output to stdout or stderr.")
+            else
+              response.reply("```" + output.encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '_') + "```")
+            end
           end
         elsif usernm
           response.reply_with_mention("I was unable to find a password for you on #{server}, please check you direct messages from me.")
