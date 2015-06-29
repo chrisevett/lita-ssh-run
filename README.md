@@ -29,6 +29,8 @@ None
 
 `Lita, set password for 192.168.1.0 to PASSWORD`
 
+`List, set port for 192.168.1.0 to 2222`
+
 
 ## License
 
