@@ -4,23 +4,35 @@ module Lita
     require 'net/ssh'
     require 'winrm'
 
-    route(/^run\s+(.+)\s+on\s+(.+)/i, :run_command, command: true, help: { "run <command> on <machine>" => "runs an ssh or powershell command on remote machine" })
+    route(/^run\s+(.+)\s+on\s+(.+)/i, 
+          :run_command, 
+          command: true, 
+          help: { "run <command> on <machine>" => "runs an ssh or powershell command on remote machine" })
 
     route(/^set\s+(username|password)\s+for\s+(.+)\s+to\s+(.+)/i, 
-                                                                  :set_user_pass, 
-                                                                  command: true, 
-                                                                  help: { "set <username or password> for <machineName>" =>
-                                                                          "sets a username or password for a machine you want to run commands on" })
+          :set_user_pass, 
+          command: true, 
+          help: { "set <username or password> for <machineName>" =>
+                  "sets a username or password for a machine you want to run commands on" })
 
     route(/^set\s+(port)\s+for\s+(.+)\s+to\s+(.+)/i,
-                                                    :set_server_port, 
-                                                    command: true, 
-                                                    help: { "set port for <machinename>" => 
-                                                            "changes default port for machine connection (defaults are 22 for SSH and 5985 for winrm" })
+          :set_server_port, 
+          command: true, 
+          help: { "set port for <machinename>" => 
+                  "changes default port for machine connection (defaults are 22 for SSH and 5985 for winrm" })
 
-    route(/^set\s+(os)\s+for\s+(.+)\s+to\s+(.+)/i, :set_server_os, command: true, help: { "set os for <machineName>" => "choices are 'windows' and 'linux'. This tells us to use ssh or winrm for the specified machine" })
+    route(/^set\s+(os)\s+for\s+(.+)\s+to\s+(.+)/i, 
+          :set_server_os, 
+          command: true, 
+          help: { "set os for <machineName>" => 
+                  "choices are 'windows' and 'linux'. This tells us to use ssh or winrm for the specified machine" })
 
-    route(/^clear\s+all\s+stored\s+(creds|credentials)/i, :flush_redis, command: true, restrict_to: :admins, help: { "clear all stored cred" => "blows away our redis data for lita-run-ssh" })
+    route(/^clear\s+all\s+stored\s+(creds|credentials)/i, 
+          :flush_redis, 
+          command: true, 
+          restrict_to: :admins, 
+          help: { "clear all stored cred" => 
+                  "blows away our redis data for lita-run-ssh" })
 
     def run_command(response)
       server = response.matches[0][1]
