@@ -29,7 +29,7 @@ None
 
 `Lita, set password for 192.168.1.0 to PASSWORD`
 
-`Lita, set port for 192.168.1.0 to 2222`
+`List, set port for 192.168.1.0 to 2222`
 
 
 ## License
