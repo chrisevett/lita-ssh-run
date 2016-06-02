@@ -1,15 +1,17 @@
 # lita-ssh-run
 
 This will allow you to run commands via ssh and powershell via winrm
+    
 Example:
 `Lita, run uptime on 192.168.1.10`
 `Lita, run Get-Service on 192.168.1.20`
 
-Usernames, passwords, and OS type are stored in redis memory by chat userid and host passed. **Tested on slack and hipchat**
+Usernames, passwords, and OS type are stored in redis memory by chat userid and host passed.  
+
 If not found, it will prompt via private message on how to enter user, password, and OS:
 Currently passwords are passed via plaintext in private message. I have requested to Slack to add an obfuscation format block for things like this.
 
-
+**Tested on slack and hipchat**  
 ## Installation
 
 Add lita-ssh-run to your Lita instance's Gemfile:
